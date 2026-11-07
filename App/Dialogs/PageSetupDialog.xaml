@@ -1,0 +1,79 @@
+<Window x:Class="Mwrites.Dialogs.PageSetupDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Configurar página" Width="470" SizeToContent="Height"
+        ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
+        Background="White" FontFamily="{StaticResource UiFont}">
+    <Grid Margin="22,20,22,18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="128" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Tamaño del papel:" />
+            <ComboBox x:Name="SizeCombo" Grid.Column="1" Style="{StaticResource DialogComboBox}" SelectionChanged="OnSettingsChanged" />
+
+            <TextBlock Grid.Row="1" Style="{StaticResource FieldLabel}" Text="Orientación:" Margin="0,12,0,0" />
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,12,0,0">
+                <RadioButton x:Name="PortraitRadio" Content="Vertical" IsChecked="True" GroupName="Orientation"
+                             Checked="OnSettingsChanged" Margin="0,0,18,0" />
+                <RadioButton x:Name="LandscapeRadio" Content="Horizontal" GroupName="Orientation"
+                             Checked="OnSettingsChanged" />
+            </StackPanel>
+
+            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="Márgenes (cm)" FontSize="13" FontWeight="SemiBold"
+                       Margin="0,16,0,8" Foreground="{StaticResource TextPrimaryBrush}" />
+            <Grid Grid.Row="3" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="128" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="86" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Style="{StaticResource FieldLabel}" Text="Superior:" />
+                <TextBox x:Name="TopBox" Grid.Column="1" Style="{StaticResource DialogTextBox}" Margin="0,0,0,8" />
+                <TextBlock Grid.Column="3" Grid.Row="0" Style="{StaticResource FieldLabel}" Text="Inferior:" />
+                <TextBox x:Name="BottomBox" Grid.Column="4" Style="{StaticResource DialogTextBox}" Margin="0,0,0,8" />
+                <TextBlock Grid.Row="1" Style="{StaticResource FieldLabel}" Text="Izquierdo:" />
+                <TextBox x:Name="LeftBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource DialogTextBox}" />
+                <TextBlock Grid.Row="1" Grid.Column="3" Style="{StaticResource FieldLabel}" Text="Derecho:" />
+                <TextBox x:Name="RightBox" Grid.Row="1" Grid.Column="4" Style="{StaticResource DialogTextBox}" />
+            </Grid>
+
+            <Border Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3" BorderBrush="{StaticResource SubtleBorderBrush}"
+                    BorderThickness="1" CornerRadius="3" Background="#FAF9F8" Width="100" Height="128"
+                    Margin="12,14,0,0" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Border x:Name="PreviewPage" Background="White" BorderBrush="#C8C6C4" BorderThickness="1" Margin="14">
+                    <Border x:Name="PreviewContent" Background="#EAF1FB" Margin="8" />
+                </Border>
+            </Border>
+        </Grid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Style="{StaticResource SecondaryButton}" Content="Cancelar" IsCancel="True" Margin="0,0,8,0" Click="OnCancel" />
+            <Button Style="{StaticResource PrimaryButton}" Content="Aceptar" IsDefault="True" Click="OnAccept" />
+        </StackPanel>
+    </Grid>
+</Window>

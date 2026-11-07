@@ -1,0 +1,40 @@
+<Window x:Class="Mwrites.Dialogs.InsertTableDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Insertar tabla" Width="360" SizeToContent="Height"
+        ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
+        Background="White" FontFamily="{StaticResource UiFont}">
+    <Grid Margin="22,20,22,18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Elige el número de filas y columnas." FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,14" />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Filas:" />
+            <TextBox x:Name="RowsBox" Grid.Column="1" Text="3" Style="{StaticResource DialogTextBox}" />
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Style="{StaticResource FieldLabel}" Text="Columnas:" />
+            <TextBox x:Name="ColumnsBox" Grid.Column="1" Text="3" Style="{StaticResource DialogTextBox}" />
+        </Grid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Style="{StaticResource SecondaryButton}" Content="Cancelar" IsCancel="True" Margin="0,0,8,0" />
+            <Button Style="{StaticResource PrimaryButton}" Content="Insertar" IsDefault="True" Click="OnAccept" />
+        </StackPanel>
+    </Grid>
+</Window>

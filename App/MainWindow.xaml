@@ -1,0 +1,822 @@
+﻿<Window x:Class="Mwrites.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Mwrites.Controls"
+        Title="Documento sin título - Mwrites"
+        Width="1280" Height="840" MinWidth="900" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource CanvasBrush}"
+        FontFamily="{StaticResource UiFont}"
+        Icon="Assets/icon.ico"
+        AllowDrop="True" Drop="OnWindowDrop" DragOver="OnWindowDragOver"
+        PreviewKeyDown="OnWindowPreviewKeyDown"
+        Closing="OnWindowClosing">
+
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+N" Command="{x:Static ApplicationCommands.New}" />
+        <KeyBinding Gesture="Ctrl+S" Command="{x:Static ApplicationCommands.Save}" />
+        <KeyBinding Gesture="Ctrl+Shift+S" Command="{x:Static ApplicationCommands.SaveAs}" />
+        <KeyBinding Gesture="Ctrl+O" Command="{x:Static ApplicationCommands.Open}" />
+        <KeyBinding Gesture="Ctrl+P" Command="{x:Static ApplicationCommands.Print}" />
+        <KeyBinding Gesture="Ctrl+F" Command="{x:Static ApplicationCommands.Find}" />
+        <KeyBinding Gesture="Ctrl+H" Command="{x:Static ApplicationCommands.Replace}" />
+    </Window.InputBindings>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static ApplicationCommands.New}" Executed="OnNewCommand" />
+        <CommandBinding Command="{x:Static ApplicationCommands.Open}" Executed="OnOpenCommand" />
+        <CommandBinding Command="{x:Static ApplicationCommands.Save}" Executed="OnSaveCommand" />
+        <CommandBinding Command="{x:Static ApplicationCommands.SaveAs}" Executed="OnSaveAsCommand" />
+        <CommandBinding Command="{x:Static ApplicationCommands.Print}" Executed="OnPrintCommand" />
+        <CommandBinding Command="{x:Static ApplicationCommands.Find}" Executed="OnFindCommand" />
+        <CommandBinding Command="{x:Static ApplicationCommands.Replace}" Executed="OnReplaceCommand" />
+    </Window.CommandBindings>
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ================= CINTA DE OPCIONES ================= -->
+        <Grid x:Name="RibbonRow" Grid.Row="0" Background="{StaticResource RibbonBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="FileButton" Style="{StaticResource BackstageButton}" Content="Archivo"
+                    Click="OnFileButtonClick" Margin="0" VerticalAlignment="Stretch" />
+
+            <TabControl x:Name="RibbonTabs" Grid.Column="1" Style="{StaticResource RibbonTabControl}">
+
+                <!-- ===== INICIO ===== -->
+                <TabItem Header="Inicio" Style="{StaticResource RibbonTabItem}">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <StackPanel Orientation="Horizontal" Margin="4,3,4,0" Background="White">
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Pegar" Click="OnPaste" ToolTip="Pegar (Ctrl+V)">
+                                            <TextBlock Text="&#xE77F;" FontFamily="{StaticResource GlyphFont}" FontSize="24" />
+                                        </Button>
+                                        <StackPanel Margin="2,0,0,0" VerticalAlignment="Top">
+                                            <Button Style="{StaticResource RibbonSmallButton}" Tag="Cortar" Click="OnCut" ToolTip="Cortar (Ctrl+X)">
+                                                <TextBlock Text="&#xE8C6;" FontFamily="{StaticResource GlyphFont}" FontSize="14" />
+                                            </Button>
+                                            <Button Style="{StaticResource RibbonSmallButton}" Tag="Copiar" Click="OnCopy" ToolTip="Copiar (Ctrl+C)">
+                                                <TextBlock Text="&#xE8C8;" FontFamily="{StaticResource GlyphFont}" FontSize="14" />
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Portapapeles" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                            <ComboBox x:Name="FontFamilyCombo" Width="148" Style="{StaticResource RibbonComboBox}"
+                                                      SelectionChanged="OnFontFamilyChanged" ToolTip="Tipo de letra" />
+                                            <ComboBox x:Name="FontSizeCombo" Width="58" Margin="4,0,0,0" Style="{StaticResource RibbonComboBox}"
+                                                      SelectionChanged="OnFontSizeChanged" ToolTip="Tamaño de letra" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="+" Margin="3,0,0,0" Click="OnGrowFont" ToolTip="Aumentar tamaño" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="−" Click="OnShrinkFont" ToolTip="Reducir tamaño" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ToggleButton x:Name="BoldToggle" Style="{StaticResource RibbonIconToggle}"
+                                                          Content="B" FontFamily="Segoe UI" FontWeight="Bold" Click="OnBold" ToolTip="Negrita (Ctrl+B)" />
+                                            <ToggleButton x:Name="ItalicToggle" Style="{StaticResource RibbonIconToggle}"
+                                                          Content="I" FontFamily="Segoe UI" FontStyle="Italic" Click="OnItalic" ToolTip="Cursiva (Ctrl+I)" />
+                                            <ToggleButton x:Name="UnderlineToggle" Style="{StaticResource RibbonIconToggle}"
+                                                          Content="U" FontFamily="Segoe UI" FontSize="14" Click="OnUnderline" ToolTip="Subrayado (Ctrl+U)">
+                                                <ToggleButton.RenderTransform>
+                                                    <TranslateTransform Y="1" />
+                                                </ToggleButton.RenderTransform>
+                                            </ToggleButton>
+                                            <ToggleButton x:Name="StrikeToggle" Style="{StaticResource RibbonIconToggle}"
+                                                          Content="S" FontFamily="Segoe UI" FontWeight="SemiBold" Click="OnStrike" ToolTip="Tachado" />
+                                            <Border Width="1" Background="{StaticResource DividerBrush}" Margin="4,3" />
+                                            <ToggleButton x:Name="SubscriptToggle" Style="{StaticResource RibbonIconToggle}"
+                                                          Content="x₂" FontFamily="Segoe UI" FontSize="12" Click="OnSubscript" ToolTip="Subíndice" />
+                                            <ToggleButton x:Name="SuperscriptToggle" Style="{StaticResource RibbonIconToggle}"
+                                                          Content="x²" FontFamily="Segoe UI" FontSize="12" Click="OnSuperscript" ToolTip="Superíndice" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Click="OnFontColor" ToolTip="Color de la letra">
+                                                <StackPanel>
+                                                    <TextBlock Text="A" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,-1,0,0" />
+                                                    <Border x:Name="FontColorSwatch" Width="12" Height="3" Background="#C00000" CornerRadius="1" Margin="0,1,0,0" />
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Style="{StaticResource RibbonIconButton}" Click="OnHighlight" ToolTip="Resaltado del texto">
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <Border Width="14" Height="13" Background="#FFF176" CornerRadius="2" />
+                                                    <Border Width="12" Height="2" Background="#9AA0A6" Margin="0,1,0,0" CornerRadius="1" />
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="&#xE894;" FontFamily="{StaticResource GlyphFont}"
+                                                    FontSize="14" Click="OnClearFormatting" ToolTip="Borrar formato" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Fuente" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="•≡" FontFamily="Segoe UI" FontSize="12"
+                                                    Click="OnBullets" ToolTip="Lista con viñetas" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="1." FontFamily="Segoe UI" FontSize="12"
+                                                    Click="OnNumbering" ToolTip="Lista numerada" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="↦" FontFamily="Segoe UI" FontSize="15"
+                                                    Click="OnIncreaseIndent" ToolTip="Aumentar sangría" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="↤" FontFamily="Segoe UI" FontSize="15"
+                                                    Click="OnDecreaseIndent" ToolTip="Reducir sangría" />
+                                            <Border Width="1" Background="{StaticResource DividerBrush}" Margin="4,3" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="&#xE8E4;" FontFamily="{StaticResource GlyphFont}"
+                                                    Click="OnAlignLeft" ToolTip="Alinear a la izquierda (Ctrl+L)" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="&#xE8E3;" FontFamily="{StaticResource GlyphFont}"
+                                                    Click="OnAlignCenter" ToolTip="Centrar (Ctrl+E)" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="&#xE8E2;" FontFamily="{StaticResource GlyphFont}"
+                                                    Click="OnAlignRight" ToolTip="Alinear a la derecha (Ctrl+R)" />
+                                            <Button Style="{StaticResource RibbonIconButton}" Content="&#xE8E1;" FontFamily="{StaticResource GlyphFont}"
+                                                    Click="OnAlignJustify" ToolTip="Justificar (Ctrl+J)" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock Text="Interlineado" FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="3,0,6,0" />
+                                            <ComboBox x:Name="LineSpacingCombo" Width="86" Style="{StaticResource RibbonComboBox}" SelectionChanged="OnLineSpacingChanged" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Párrafo" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid VerticalAlignment="Top">
+                                        <ListBox x:Name="StyleGallery" Style="{StaticResource GalleryListBox}" Height="66" Margin="2,0,0,0"
+                                                 SelectionChanged="OnStyleGalleryChanged">
+                                            <ListBoxItem Style="{StaticResource GalleryItem}" Tag="Normal">
+                                                <TextBlock Text="Normal" FontFamily="Calibri" FontSize="12" />
+                                            </ListBoxItem>
+                                            <ListBoxItem Style="{StaticResource GalleryItem}" Tag="Heading1">
+                                                <TextBlock Text="Título 1" FontFamily="Calibri" FontSize="15" FontWeight="Bold" Foreground="#2E74B5" />
+                                            </ListBoxItem>
+                                            <ListBoxItem Style="{StaticResource GalleryItem}" Tag="Heading2">
+                                                <TextBlock Text="Título 2" FontFamily="Calibri" FontSize="13" FontWeight="Bold" Foreground="#2E74B5" />
+                                            </ListBoxItem>
+                                            <ListBoxItem Style="{StaticResource GalleryItem}" Tag="Heading3">
+                                                <TextBlock Text="Título 3" FontFamily="Calibri" FontSize="12" FontWeight="Bold" Foreground="#1F3864" />
+                                            </ListBoxItem>
+                                            <ListBoxItem Style="{StaticResource GalleryItem}" Tag="Title">
+                                                <TextBlock Text="Título" FontFamily="Calibri Light" FontSize="15" Foreground="#1F3864" />
+                                            </ListBoxItem>
+                                            <ListBoxItem Style="{StaticResource GalleryItem}" Tag="Subtitle">
+                                                <TextBlock Text="Subtítulo" FontFamily="Calibri Light" FontSize="12" FontStyle="Italic" Foreground="#595959" />
+                                            </ListBoxItem>
+                                            <ListBoxItem Style="{StaticResource GalleryItem}" Tag="Quote">
+                                                <TextBlock Text="Cita" FontFamily="Calibri" FontSize="12" FontStyle="Italic" Foreground="#595959" />
+                                            </ListBoxItem>
+                                        </ListBox>
+                                    </Grid>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Estilos" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}" BorderThickness="0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Buscar" Click="OnFindCommand" ToolTip="Buscar (Ctrl+F)">
+                                            <TextBlock Text="&#xE721;" FontFamily="{StaticResource GlyphFont}" FontSize="14" />
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Reemplazar" Click="OnReplaceCommand" ToolTip="Buscar y reemplazar (Ctrl+H)">
+                                            <TextBlock Text="&#xE8AB;" FontFamily="{StaticResource GlyphFont}" FontSize="14" />
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Seleccionar todo" Click="OnSelectAll">
+                                            <TextBlock Text="&#xE8B3;" FontFamily="{StaticResource GlyphFont}" FontSize="14" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Edición" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- ===== INSERTAR ===== -->
+                <TabItem Header="Insertar" Style="{StaticResource RibbonTabItem}">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <StackPanel Orientation="Horizontal" Margin="4,3,4,0" Background="White">
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Button Style="{StaticResource RibbonLargeButton}" Tag="Salto de página" Click="OnPageBreak" ToolTip="Insertar un salto de página (Ctrl+Intro)">
+                                        <TextBlock Text="&#xE8A5;" FontFamily="{StaticResource GlyphFont}" FontSize="22" />
+                                    </Button>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Páginas" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Tabla" Click="OnInsertTable" ToolTip="Insertar una tabla">
+                                            <Viewbox Width="24" Height="24">
+                                                <Grid Width="24" Height="24">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border Grid.Row="0" Grid.Column="0" BorderBrush="#2B579A" BorderThickness="1.2" Margin="1" />
+                                                    <Border Grid.Row="0" Grid.Column="1" BorderBrush="#2B579A" BorderThickness="1.2" Margin="1" />
+                                                    <Border Grid.Row="0" Grid.Column="2" BorderBrush="#2B579A" BorderThickness="1.2" Margin="1" />
+                                                    <Border Grid.Row="1" Grid.Column="0" BorderBrush="#2B579A" BorderThickness="1.2" Margin="1" />
+                                                    <Border Grid.Row="1" Grid.Column="1" BorderBrush="#2B579A" BorderThickness="1.2" Margin="1" />
+                                                    <Border Grid.Row="1" Grid.Column="2" BorderBrush="#2B579A" BorderThickness="1.2" Margin="1" />
+                                                    <Border Grid.Row="2" Grid.Column="0" BorderBrush="#2B579A" BorderThickness="1.2" Margin="1" />
+                                                    <Border Grid.Row="2" Grid.Column="1" BorderBrush="#2B579A" BorderThickness="1.2" Margin="1" />
+                                                    <Border Grid.Row="2" Grid.Column="2" BorderBrush="#2B579A" BorderThickness="1.2" Margin="1" />
+                                                </Grid>
+                                            </Viewbox>
+                                        </Button>
+                                        <StackPanel x:Name="TableEditPanel" Orientation="Horizontal" VerticalAlignment="Top" Visibility="Collapsed">
+                                            <StackPanel Margin="2,0,0,0">
+                                                <Button Style="{StaticResource RibbonSmallButton}" AutomationProperties.AutomationId="TableAddRow" Tag="Fila debajo" Click="OnAddRowBelow" ToolTip="Añadir una fila debajo">
+                                                    <TextBlock Text="&#xE8A5;" FontFamily="{StaticResource GlyphFont}" FontSize="14" />
+                                                </Button>
+                                                <Button Style="{StaticResource RibbonSmallButton}" AutomationProperties.AutomationId="TableRemoveRow" Tag="Eliminar fila" Click="OnRemoveRow" ToolTip="Eliminar la fila actual">
+                                                    <TextBlock Text="&#xE74D;" FontFamily="{StaticResource GlyphFont}" FontSize="13" />
+                                                </Button>
+                                            </StackPanel>
+                                            <StackPanel Margin="2,0,0,0">
+                                                <Button Style="{StaticResource RibbonSmallButton}" AutomationProperties.AutomationId="TableAddColumn" Tag="Columna derecha" Click="OnAddColumnRight" ToolTip="Añadir una columna a la derecha">
+                                                    <TextBlock Text="&#xE8A5;" FontFamily="{StaticResource GlyphFont}" FontSize="14">
+                                                        <TextBlock.LayoutTransform>
+                                                            <RotateTransform Angle="270" />
+                                                        </TextBlock.LayoutTransform>
+                                                    </TextBlock>
+                                                </Button>
+                                                <Button Style="{StaticResource RibbonSmallButton}" AutomationProperties.AutomationId="TableRemoveColumn" Tag="Eliminar columna" Click="OnRemoveColumn" ToolTip="Eliminar la columna actual">
+                                                    <TextBlock Text="&#xE71D;" FontFamily="{StaticResource GlyphFont}" FontSize="13" />
+                                                </Button>
+                                            </StackPanel>
+                                            <Button Style="{StaticResource RibbonSmallButton}" AutomationProperties.AutomationId="TableDelete" Tag="Eliminar tabla" Click="OnDeleteTable" ToolTip="Eliminar la tabla completa" VerticalAlignment="Top">
+                                                <TextBlock Text="&#xE74D;" FontFamily="{StaticResource GlyphFont}" FontSize="16" Foreground="#C42B1C" />
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Tabla" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Button Style="{StaticResource RibbonLargeButton}" Tag="Imagen" Click="OnInsertImage" ToolTip="Insertar una imagen">
+                                        <TextBlock Text="&#xE91B;" FontFamily="{StaticResource GlyphFont}" FontSize="22" />
+                                    </Button>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Ilustraciones" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Fecha y hora" Click="OnInsertDate" ToolTip="Insertar la fecha actual">
+                                            <TextBlock Text="&#xE787;" FontFamily="{StaticResource GlyphFont}" FontSize="14" />
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Símbolo" Click="OnInsertSymbol" ToolTip="Insertar un símbolo">
+                                            <TextBlock Text="Ω" FontFamily="Segoe UI Symbol" FontSize="13" />
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Línea horizontal" Click="OnInsertHorizontalRule" ToolTip="Insertar una línea separadora">
+                                            <TextBlock Text="—" FontSize="13" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Texto" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- ===== DISPOSICIÓN ===== -->
+                <TabItem Header="Disposición" Style="{StaticResource RibbonTabItem}">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <StackPanel Orientation="Horizontal" Margin="4,3,4,0" Background="White">
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Márgenes" Click="OnMarginsMenu" ToolTip="Elegir márgenes">
+                                            <Grid Width="24" Height="24">
+                                                <Border BorderBrush="#2B579A" BorderThickness="1.5" CornerRadius="1" />
+                                                <Border BorderBrush="#9CC3E5" BorderThickness="1" Margin="5" />
+                                            </Grid>
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Orientación" Click="OnToggleOrientation" ToolTip="Cambiar entre vertical y horizontal">
+                                            <Border Width="14" Height="20" BorderBrush="#2B579A" BorderThickness="1.6" CornerRadius="1" />
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Tamaño" Click="OnSizeMenu" ToolTip="Tamaño del papel">
+                                            <Grid Width="24" Height="24">
+                                                <Border Width="16" Height="21" BorderBrush="#2B579A" BorderThickness="1.5" CornerRadius="1" Background="White" />
+                                                <TextBlock Text="A4" FontSize="7" FontWeight="SemiBold" Foreground="#2B579A" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Configurar página" Click="OnPageSetup" ToolTip="Configurar página">
+                                            <TextBlock Text="&#xE713;" FontFamily="{StaticResource GlyphFont}" FontSize="20" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Configurar página" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Sangría" Click="OnIncreaseIndent">
+                                            <TextBlock Text="↦" FontSize="14" />
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Reducir sangría" Click="OnDecreaseIndent">
+                                            <TextBlock Text="↤" FontSize="14" />
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Espaciado" Click="OnParagraphSpacing" ToolTip="Espaciado antes y después del párrafo">
+                                            <TextBlock Text="&#xE8E4;" FontFamily="{StaticResource GlyphFont}" FontSize="13" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Párrafo" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}" BorderThickness="0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Restablecer" Click="OnZoomReset" ToolTip="Volver al 100 %">
+                                            <TextBlock x:Name="ZoomRibbonText" Text="100 %" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Ancho de página" Click="OnZoomPageWidth" ToolTip="Ajustar al ancho de la página">
+                                            <TextBlock Text="&#xE740;" FontFamily="{StaticResource GlyphFont}" FontSize="20" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Zoom" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- ===== REVISAR ===== -->
+                <TabItem Header="Revisar" Style="{StaticResource RibbonTabItem}">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <StackPanel Orientation="Horizontal" Margin="4,3,4,0" Background="White">
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal">
+                                        <ToggleButton x:Name="SpellToggle" Style="{StaticResource RibbonLargeToggle}" Tag="Ortografía"
+                                                      IsChecked="True" Click="OnToggleSpellCheck" ToolTip="Activar o desactivar la revisión ortográfica">
+                                            <TextBlock Text="abc" FontSize="16" FontWeight="SemiBold" />
+                                        </ToggleButton>
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Contar palabras" Click="OnWordCount" ToolTip="Recuento de palabras y caracteres">
+                                            <TextBlock Text="123" FontSize="16" FontWeight="SemiBold" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Revisión" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <StackPanel Orientation="Horizontal" Margin="2,2,0,4">
+                                            <TextBlock Text="Idioma:" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                            <ComboBox x:Name="LanguageCombo" Width="150" Style="{StaticResource RibbonComboBox}" SelectionChanged="OnLanguageChanged">
+                                                <ComboBoxItem Content="Español (España)" Tag="es-ES" />
+                                                <ComboBoxItem Content="Español (México)" Tag="es-MX" />
+                                                <ComboBoxItem Content="Inglés (Estados Unidos)" Tag="en-US" />
+                                                <ComboBoxItem Content="Francés (Francia)" Tag="fr-FR" />
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Buscar en el documento" Click="OnFindCommand">
+                                            <TextBlock Text="&#xE721;" FontFamily="{StaticResource GlyphFont}" FontSize="13" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Idioma" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}" BorderThickness="0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Documento limpio" Click="OnClearAllFormatting" ToolTip="Quitar el formato de todo el documento">
+                                            <TextBlock Text="&#xE894;" FontFamily="{StaticResource GlyphFont}" FontSize="13" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Cambios" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- ===== VISTA ===== -->
+                <TabItem Header="Vista" Style="{StaticResource RibbonTabItem}">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <StackPanel Orientation="Horizontal" Margin="4,3,4,0" Background="White">
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal">
+                                        <ToggleButton x:Name="NavPaneToggle" Style="{StaticResource RibbonLargeToggle}" Tag="Panel de navegación"
+                                                      Click="OnToggleNavPane" ToolTip="Mostrar u ocultar el panel de navegación">
+                                            <TextBlock Text="☰" FontSize="18" />
+                                        </ToggleButton>
+                                        <ToggleButton x:Name="FocusToggle" Style="{StaticResource RibbonLargeToggle}" Tag="Sin distracciones"
+                                                      Click="OnToggleFocusMode" ToolTip="Modo de lectura sin distracciones (Esc para salir)">
+                                            <TextBlock Text="&#xE740;" FontFamily="{StaticResource GlyphFont}" FontSize="19" />
+                                        </ToggleButton>
+                                        <Button Style="{StaticResource RibbonLargeButton}" Tag="Modo lectura" Click="OnReadingMode" ToolTip="Abrir el documento en modo lectura">
+                                            <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource GlyphFont}" FontSize="20" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Vistas" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel VerticalAlignment="Top">
+                                        <ToggleButton x:Name="RulerToggle" Style="{StaticResource RibbonSmallToggle}" Tag="Regla" IsChecked="True"
+                                                      Click="OnToggleRuler" ToolTip="Mostrar u ocultar la regla">
+                                            <TextBlock Text="↔" FontSize="13" />
+                                        </ToggleButton>
+                                        <ToggleButton x:Name="GridToggle" Style="{StaticResource RibbonSmallToggle}" Tag="Líneas de cuadrícula"
+                                                      Click="OnToggleGrid" ToolTip="Mostrar guías de diagramación">
+                                            <TextBlock Text="▦" FontSize="13" />
+                                        </ToggleButton>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Mostrar" />
+                                </Grid>
+                            </Border>
+
+                            <Border Style="{StaticResource RibbonGroup}" BorderThickness="0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="100 %" Click="OnZoomReset">
+                                            <TextBlock Text="1:1" FontSize="12" />
+                                        </Button>
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Ancho de página" Click="OnZoomPageWidth">
+                                            <TextBlock Text="↔" FontSize="12" />
+                                        </Button>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Zoom" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,10,0">
+                <Button Style="{StaticResource RibbonIconButton}" Content="&#xE7A7;" FontFamily="{StaticResource GlyphFont}" Click="OnUndo" ToolTip="Deshacer (Ctrl+Z)" />
+                <Button Style="{StaticResource RibbonIconButton}" Content="&#xE7A6;" FontFamily="{StaticResource GlyphFont}" Click="OnRedo" ToolTip="Rehacer (Ctrl+Y)" />
+                <Border Width="1" Height="18" Background="{StaticResource DividerBrush}" Margin="4,0" />
+                <Button Style="{StaticResource RibbonIconButton}" Content="&#xE74E;" FontFamily="{StaticResource GlyphFont}" Click="OnSaveCommand" ToolTip="Guardar (Ctrl+S)" />
+            </StackPanel>
+        </Grid>
+
+        <!-- ================= ÁREA DEL DOCUMENTO ================= -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="NavColumn" Width="248" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border x:Name="NavPane" Grid.Column="0" Background="White" BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="14,12,10,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Navegación" FontSize="13.5" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                        <Button Grid.Column="1" Style="{StaticResource RibbonIconButton}" Content="&#xE72C;" FontFamily="{StaticResource GlyphFont}"
+                                FontSize="13" Click="OnRefreshHeadings" ToolTip="Actualizar el panel" />
+                    </Grid>
+                    <ListBox x:Name="HeadingList" Grid.Row="1" Style="{StaticResource NavListBox}" SelectionChanged="OnHeadingSelected" />
+                    <TextBlock x:Name="NoHeadingsText" Grid.Row="1" Margin="20,24,16,0" TextWrapping="Wrap"
+                               Text="Añade títulos con los estilos de la galería y aquí aparecerá la estructura del documento."
+                               FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" IsHitTestVisible="False" />
+                    <TextBlock Grid.Row="2" Margin="18,8,12,14" FontSize="11" Foreground="#8A8886" TextWrapping="Wrap"
+                               Text="Haz clic en un título para ir a esa parte del documento." />
+                </Grid>
+            </Border>
+
+            <GridSplitter x:Name="NavSplitter" Grid.Column="1" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                          Background="Transparent" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" />
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border x:Name="RulerHost" Background="{StaticResource CanvasBrush}" Padding="0,8,0,0">
+                    <Canvas x:Name="RulerCanvas" Height="30" ClipToBounds="True">
+                        <controls:RulerControl x:Name="Ruler" Height="22" Width="794">
+                            <controls:RulerControl.LayoutTransform>
+                                <ScaleTransform x:Name="RulerScale" ScaleX="1" ScaleY="1" />
+                            </controls:RulerControl.LayoutTransform>
+                        </controls:RulerControl>
+                    </Canvas>
+                </Border>
+
+                <ScrollViewer x:Name="PageScroll" Grid.Row="1" Background="{StaticResource CanvasBrush}"
+                              HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                              HorizontalContentAlignment="Center" VerticalContentAlignment="Top"
+                              Padding="0,10,0,0" Focusable="False"
+                              ScrollChanged="OnPageScrollChanged">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Grid.LayoutTransform>
+                            <ScaleTransform x:Name="ZoomScale" ScaleX="1" ScaleY="1" />
+                        </Grid.LayoutTransform>
+                        <StackPanel>
+                            <Border x:Name="PageSheet" Width="794" MinHeight="1123" Background="White" Margin="0,0,0,48">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.22" Color="#000000" />
+                                </Border.Effect>
+                                <Grid>
+                                    <RichTextBox x:Name="Editor"
+                                                 BorderThickness="0" Background="White"
+                                                 AcceptsTab="True" IsDocumentEnabled="True"
+                                                 FontFamily="Calibri" FontSize="15"
+                                                 VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled"
+                                                 Padding="96,96,96,96"
+                                                 SpellCheck.IsEnabled="True"
+                                                 TextChanged="OnEditorTextChanged"
+                                                 SelectionChanged="OnEditorSelectionChanged"
+                                                 PreviewKeyDown="OnEditorPreviewKeyDown"
+                                                 AllowDrop="True" Drop="OnEditorDrop" />
+                                    <Canvas x:Name="PageBreakOverlay" IsHitTestVisible="False" ClipToBounds="True" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+
+            <Border x:Name="GridOverlay" Grid.Column="2" IsHitTestVisible="False" Visibility="Collapsed">
+                <Border.Background>
+                    <VisualBrush TileMode="Tile" Viewport="0,0,32,32" ViewportUnits="Absolute" Opacity="0.5">
+                        <VisualBrush.Visual>
+                            <Grid Width="32" Height="32" Background="Transparent">
+                                <Border BorderBrush="#D6E4F5" BorderThickness="0.5" />
+                            </Grid>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Border.Background>
+            </Border>
+        </Grid>
+
+        <!-- ================= BARRA DE ESTADO ================= -->
+        <Border x:Name="StatusBar" Grid.Row="2" Background="{StaticResource StatusBrush}" BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,1,0,0">
+            <Grid Margin="8,2,10,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="WordCountButton" Style="{StaticResource StatusButton}" Click="OnWordCount"
+                        ToolTip="Ver el recuento de palabras">
+                    <TextBlock x:Name="WordCountText" Text="0 palabras" />
+                </Button>
+                <TextBlock Grid.Column="1" Text="  ·  " Foreground="#A19F9D" VerticalAlignment="Center" />
+                <Button Grid.Column="2" HorizontalAlignment="Left" Style="{StaticResource StatusButton}"
+                        ToolTip="Idioma de revisión">
+                    <TextBlock x:Name="LanguageStatus" Text="Español (España)" />
+                </Button>
+
+                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="PageCountText" Text="1 página" FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <ToggleButton x:Name="FocusStatusToggle" Style="{StaticResource StatusToggle}" Click="OnToggleFocusMode"
+                                  ToolTip="Modo sin distracciones">
+                        <TextBlock Text="&#xE740;" FontFamily="{StaticResource GlyphFont}" FontSize="13" />
+                    </ToggleButton>
+                </StackPanel>
+
+                <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource StatusButton}" Content="−" Click="OnZoomOut" ToolTip="Reducir zoom" FontSize="13" />
+                    <Slider x:Name="ZoomSlider" Width="96" Minimum="50" Maximum="200" Value="100"
+                            Style="{StaticResource ZoomSlider}" ValueChanged="OnZoomSliderValueChanged" />
+                    <Button Style="{StaticResource StatusButton}" Content="+" Click="OnZoomIn" ToolTip="Aumentar zoom" FontSize="13" />
+                    <Button x:Name="ZoomTextButton" Style="{StaticResource StatusButton}" Content="100 %" Click="OnZoomReset" ToolTip="Volver al 100 %" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ================= ÁREA DE ARCHIVO ================= -->
+        <Grid x:Name="Backstage" Grid.RowSpan="3" Visibility="Collapsed" Panel.ZIndex="50" Background="#F3F2F1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="#F3F2F1" BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Margin="20,18,16,10">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Assets/icon.png" Width="30" Height="30" />
+                            <TextBlock Text="Mwrites" FontSize="21" FontWeight="SemiBold" Margin="8,0,0,0" VerticalAlignment="Center"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                        </StackPanel>
+                        <TextBlock x:Name="BackstageDocName" Text="Documento sin título" Margin="0,12,0,0" FontSize="12"
+                                   Foreground="{StaticResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <ListBox x:Name="BackstageList" Grid.Row="1" Style="{StaticResource NavListBox}"
+                             SelectionChanged="OnBackstageSelectionChanged">
+                        <ListBoxItem Style="{StaticResource BackstageNavItem}" Tag="Info" Content="Información" />
+                        <ListBoxItem Style="{StaticResource BackstageNavItem}" Tag="New" Content="Nuevo" />
+                        <ListBoxItem Style="{StaticResource BackstageNavItem}" Tag="Open" Content="Abrir" />
+                        <ListBoxItem Style="{StaticResource BackstageNavItem}" Tag="Save" Content="Guardar" />
+                        <ListBoxItem Style="{StaticResource BackstageNavItem}" Tag="SaveAs" Content="Guardar como" />
+                        <ListBoxItem Style="{StaticResource BackstageNavItem}" Tag="Print" Content="Imprimir / PDF" />
+                        <ListBoxItem Style="{StaticResource BackstageNavItem}" Tag="Close" Content="Cerrar" />
+                    </ListBox>
+                    <Button Grid.Row="2" Style="{StaticResource SecondaryButton}" Content="Volver al documento"
+                            Margin="18,10,18,18" Click="OnCloseBackstage" />
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <ScrollViewer x:Name="BackstageInfoPane" VerticalScrollBarVisibility="Auto" Padding="36,26,36,30">
+                    <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+                        <TextBlock Text="Información" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                        <TextBlock Text="Propiedades y documentos recientes" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,22" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Background="White" BorderBrush="{StaticResource SubtleBorderBrush}" BorderThickness="1"
+                                    CornerRadius="4" Padding="20" Margin="0,0,14,0">
+                                <StackPanel>
+                                    <TextBlock Text="Propiedades" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,14" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="Ubicación" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,16,8" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="InfoLocation" Text="Sin guardar" FontSize="12" Margin="0,0,0,8" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Grid.Row="1" Text="Tamaño" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,16,8" />
+                                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="InfoSize" Text="—" FontSize="12" Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="2" Text="Páginas" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,16,8" />
+                                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="InfoPages" Text="1" FontSize="12" Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="3" Text="Palabras" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,16,8" />
+                                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="InfoWords" Text="0" FontSize="12" Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="4" Text="Configuración" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,16,0" />
+                                        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="InfoPageSetup" Text="A4 · Vertical" FontSize="12" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="1" Background="White" BorderBrush="{StaticResource SubtleBorderBrush}" BorderThickness="1"
+                                    CornerRadius="4" Padding="20">
+                                <StackPanel>
+                                    <TextBlock Text="Documentos recientes" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,10" />
+                                    <ListBox x:Name="RecentList" Style="{StaticResource NavListBox}" MaxHeight="240"
+                                             SelectionChanged="OnRecentSelected" />
+                                    <TextBlock x:Name="NoRecentText" Text="Todavía no has abierto ningún documento."
+                                               FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="6,4,0,0" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <TextBlock Text="Nuevo a partir de una plantilla" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,26,0,10" />
+                        <ItemsControl x:Name="TemplateCards">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer x:Name="BackstageTemplatePane" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Padding="36,26,36,30">
+                    <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+                        <TextBlock Text="Nuevo" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                        <TextBlock Text="Elige una plantilla para empezar" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,22" />
+                        <ItemsControl x:Name="TemplateCardsLarge">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

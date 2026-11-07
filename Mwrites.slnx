@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/App/">
+    <Project Path="App/Mwrites.App.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="Core/Mwrites.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Mwrites.CoreTests/Mwrites.CoreTests.csproj" />
+  </Folder>
+</Solution>
