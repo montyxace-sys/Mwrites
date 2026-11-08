@@ -655,6 +655,13 @@ public partial class MainWindow : Window
         Editor.Focus();
     }
 
+    // Clicking the style that is already selected raises no SelectionChanged, so without
+    // this the gallery keeps focus and anything typed next is swallowed.
+    private void OnStyleGalleryMouseUp(object sender, MouseButtonEventArgs e)
+    {
+        Editor.Focus();
+    }
+
     private void ApplyParagraphStyle(string key)
     {
         var paragraphs = SelectedParagraphs();

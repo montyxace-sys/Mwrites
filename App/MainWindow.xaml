@@ -176,7 +176,8 @@
                                     </Grid.RowDefinitions>
                                     <Grid VerticalAlignment="Top">
                                         <ListBox x:Name="StyleGallery" Style="{StaticResource GalleryListBox}" Height="66" Margin="2,0,0,0"
-                                                 SelectionChanged="OnStyleGalleryChanged">
+                                                 SelectionChanged="OnStyleGalleryChanged"
+                                                 MouseLeftButtonUp="OnStyleGalleryMouseUp">
                                             <ListBoxItem Style="{StaticResource GalleryItem}" Tag="Normal">
                                                 <TextBlock Text="Normal" FontFamily="Calibri" FontSize="12" />
                                             </ListBoxItem>

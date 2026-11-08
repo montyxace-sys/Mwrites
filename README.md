@@ -2,6 +2,8 @@
 
 Procesador de textos para Windows con la apariencia de Microsoft Word y un flujo de trabajo pensado para escribir sin distracciones. Es gratuito, open source y funciona sin conexión: todos los documentos se guardan en tu equipo.
 
+![Mwrites con un documento de ejemplo](docs/captura.png)
+
 ## Funciones
 
 ### Documentos
@@ -26,6 +28,8 @@ Procesador de textos para Windows con la apariencia de Microsoft Word y un flujo
 - Barra contextual con **Fila debajo**, **Eliminar fila**, **Columna derecha**, **Eliminar columna** y **Eliminar tabla**.
 - Tab recorre las celdas y, en la última, añade una fila nueva; Mayús+Tab vuelve a la anterior.
 - Las columnas se reparten el ancho de la página para no salirse de los márgenes.
+
+![Barra contextual de tablas](docs/captura-tablas.png)
 
 ### Páginas
 - Tamaños A4, Carta, Oficio y Ejecutivo, orientación vertical u horizontal y márgenes configurables.
