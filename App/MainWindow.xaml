@@ -222,6 +222,8 @@
                                             <TextBlock Text="&#xE8B3;" FontFamily="{StaticResource GlyphFont}" FontSize="14" />
                                         </Button>
                                         <Button Style="{StaticResource RibbonSmallButton}" Tag="Mayúsculas y minúsculas" Click="OnChangeCase"
+                                                AutomationProperties.AutomationId="ChangeCase"
+                                                AutomationProperties.Name="Cambiar mayúsculas y minúsculas"
                                                 ToolTip="Cambiar mayúsculas y minúsculas de la selección (o de todo el documento)">
                                             <TextBlock Text="Aa" FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold" />
                                         </Button>
