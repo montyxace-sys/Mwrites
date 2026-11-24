@@ -10,7 +10,7 @@
     <AssemblyName>Mwrites</AssemblyName>
     <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.1.0</Version>
+    <Version>1.1.0</Version>
     <Authors>MSoft</Authors>
     <Product>Mwrites</Product>
     <Company>MSoft</Company>

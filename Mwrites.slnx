@@ -4,8 +4,17 @@
   </Folder>
   <Folder Name="/Core/">
     <Project Path="Core/Mwrites.Core.csproj" />
+    <Project Path="Mwrites.Portable.Core/Mwrites.Portable.Core.csproj" />
+  </Folder>
+  <Folder Name="/Portable/">
+    <Project Path="Mwrites.Portable.App/Mwrites.Portable.App.csproj" />
+    <Project Path="Mwrites.Desktop/Mwrites.Desktop.csproj" />
+    <Project Path="Mwrites.Cli/Mwrites.Cli.csproj" />
+    <Project Path="Mwrites.Android/Mwrites.Android.csproj" />
+    <Project Path="Mwrites.iOS/Mwrites.iOS.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Mwrites.CoreTests/Mwrites.CoreTests.csproj" />
+    <Project Path="tests/Mwrites.Portable.Tests/Mwrites.Portable.Tests.csproj" />
   </Folder>
 </Solution>

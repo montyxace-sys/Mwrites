@@ -31,6 +31,7 @@ internal static class Program
             Run("RTF: ida y vuelta", RtfRoundTrip);
             Run("Plantillas: contenido y estilos", TemplatesTest);
             Run("Página: orientación y nombre", PageSetupTest);
+            Run("Cambiar mayúsculas y minúsculas", ChangeCaseTest);
         }
         finally
         {
@@ -75,6 +76,19 @@ internal static class Program
         Assert(stats.Paragraphs == 3, $"Párrafos esperados 3, obtenidos {stats.Paragraphs}.");
         Assert(stats.Headings == 1, $"Encabezados esperados 1, obtenidos {stats.Headings}.");
         Assert(stats.CharactersNoSpaces > 20, "No se contaron los caracteres sin espacios.");
+    }
+
+    private static void ChangeCaseTest()
+    {
+        Assert(TextTransforms.ToUpper("¡Hola, mundo!") == "¡HOLA, MUNDO!", "Mayúsculas incorrectas.");
+        Assert(TextTransforms.ToLower("ÁGIL ÑANDÚ") == "ágil ñandú", "Minúsculas incorrectas.");
+        Assert(TextTransforms.ToTitle("hola mundo. ágil ñandú") == "Hola Mundo. Ágil Ñandú",
+            "Iniciales incorrectas.");
+        Assert(TextTransforms.ToSentence("HOLA MUNDO. ¿CÓMO ESTÁS?") == "Hola mundo. ¿Cómo estás?",
+            "Estilo frase incorrecto.");
+        Assert(TextTransforms.ToSentence("¡BUENOS DÍAS!") == "¡Buenos días!", "Frase con ¡ incorrecta.");
+        Assert(TextTransforms.ToTitle(string.Empty) == string.Empty, "Texto vacío alterado.");
+        Assert(TextTransforms.Apply("abc", TextCase.Upper) == "ABC", "Apply no respeta el modo.");
     }
 
     private static void FindAndReplace()

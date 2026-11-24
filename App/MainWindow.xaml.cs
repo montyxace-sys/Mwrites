@@ -292,6 +292,34 @@ public partial class MainWindow : Window
         Editor.Focus();
     }
 
+    private void OnChangeCase(object sender, RoutedEventArgs e)
+    {
+        var menu = new ContextMenu();
+        AddCaseItem(menu, "MAYÚSCULAS", TextCase.Upper);
+        AddCaseItem(menu, "minúsculas", TextCase.Lower);
+        AddCaseItem(menu, "Iniciales De Cada Palabra", TextCase.Title);
+        AddCaseItem(menu, "Estilo frase", TextCase.Sentence);
+        menu.PlacementTarget = sender as UIElement;
+        menu.IsOpen = true;
+    }
+
+    private void AddCaseItem(ContextMenu menu, string label, TextCase mode)
+    {
+        var item = new MenuItem { Header = label };
+        item.Click += (_, _) => ApplyCase(mode);
+        menu.Items.Add(item);
+    }
+
+    private void ApplyCase(TextCase mode)
+    {
+        if (Editor.Selection.IsEmpty) Editor.SelectAll();
+        var text = Editor.Selection.Text;
+        if (string.IsNullOrEmpty(text)) return;
+        Editor.Selection.Text = TextTransforms.Apply(text, mode);
+        MarkDirty();
+        Editor.Focus();
+    }
+
     // TextSelection (not a plain TextRange) so formatting also sticks to the caret
     // when nothing is selected and applies to the text typed afterwards.
     private TextRange SelectionRange() => Editor.Selection;

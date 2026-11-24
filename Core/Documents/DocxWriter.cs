@@ -720,7 +720,7 @@ public static class DocxWriter
             new XElement(ep + "Properties",
                 new XAttribute(XNamespace.Xmlns + "vt", vt.NamespaceName),
                 new XElement(ep + "Application", "Mwrites"),
-                new XElement(ep + "AppVersion", "0.1")));
+                new XElement(ep + "AppVersion", "1.1")));
     }
 
     private sealed class NumberingBuilder

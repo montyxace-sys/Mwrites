@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Mwrites.Core</RootNamespace>
     <AssemblyName>Mwrites.Core</AssemblyName>
+    <Version>1.1.0</Version>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 

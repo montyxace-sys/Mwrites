@@ -9,7 +9,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <RootNamespace>Mwrites.Setup</RootNamespace>
     <AssemblyName>Mwrites.Setup</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>1.1.0</Version>
     <Product>Mwrites</Product>
     <Company>MSoft</Company>
     <AssemblyTitle>Instalador de Mwrites</AssemblyTitle>

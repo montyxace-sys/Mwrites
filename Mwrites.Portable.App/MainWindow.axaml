@@ -1,0 +1,8 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Mwrites.Portable.App"
+        x:Class="Mwrites.Portable.App.MainWindow"
+        Title="Mwrites portable 1.1"
+        Width="1100" Height="800" MinWidth="720" MinHeight="520">
+  <local:MainView />
+</Window>

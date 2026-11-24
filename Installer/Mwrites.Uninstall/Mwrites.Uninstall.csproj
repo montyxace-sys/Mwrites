@@ -9,7 +9,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <RootNamespace>Mwrites.Uninstall</RootNamespace>
     <AssemblyName>Mwrites.Uninstall</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>1.1.0</Version>
     <Product>Mwrites</Product>
     <Company>MSoft</Company>
     <AssemblyTitle>Desinstalador de Mwrites</AssemblyTitle>

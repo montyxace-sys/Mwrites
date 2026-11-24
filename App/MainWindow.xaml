@@ -221,6 +221,10 @@
                                         <Button Style="{StaticResource RibbonSmallButton}" Tag="Seleccionar todo" Click="OnSelectAll">
                                             <TextBlock Text="&#xE8B3;" FontFamily="{StaticResource GlyphFont}" FontSize="14" />
                                         </Button>
+                                        <Button Style="{StaticResource RibbonSmallButton}" Tag="Mayúsculas y minúsculas" Click="OnChangeCase"
+                                                ToolTip="Cambiar mayúsculas y minúsculas de la selección (o de todo el documento)">
+                                            <TextBlock Text="Aa" FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold" />
+                                        </Button>
                                     </StackPanel>
                                     <TextBlock Grid.Row="1" Style="{StaticResource RibbonGroupLabel}" Text="Edición" />
                                 </Grid>
